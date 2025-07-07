@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "sweetalert2": ["node_modules/sweatalert2"]
+    }
   }
 }
