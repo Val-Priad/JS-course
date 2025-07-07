@@ -80,8 +80,9 @@ const account6: IAccount = {
   currency: "USD",
   locale: "en-US",
 };
+
 const accounts = [account1, account2, account3, account4, account5, account6];
-let currentAccount;
+let currentAccount: IAccount;
 let sorted = false;
 
 // Elements
@@ -142,18 +143,30 @@ accounts.forEach((acc) => {
   acc.username = createUsername(acc.owner);
 });
 
+const accountsAreUnique = (accounts: IAccount[]) => {
+  const usernames = accounts.map((acc) => acc.username);
+  return usernames.length === new Set(usernames).size;
+};
+
+if (!accountsAreUnique(accounts)) {
+  alert("You can't use the program, there is duplicate usernames in accounts");
+}
+
 const displayMovements = (account: IAccount, sort = false) => {
   containerMovements.innerHTML = "";
+
   const movements = sort
     ? account.movements.slice().sort((a, b) => a - b)
     : account.movements;
   movements.forEach((mov, idx) => {
+    let movementDate: any = new Date(account.movementsDates[idx]);
+    movementDate = `${movementDate.getDate()}/${movementDate.getMonth()}/${movementDate.getFullYear()}`;
     const typeOfMov = mov > 0 ? "deposit" : "withdrawal";
     const html = `
 <div class="movements__row">
   <div class="movements__type movements__type--${typeOfMov}">${idx} ${typeOfMov}</div>
-  <!-- <div class="movements__date">3 days ago</div> -->
-  <div class="movements__value">${mov}€</div>
+  <div class="movements__date">${movementDate}</div> 
+  <div class="movements__value">${mov.toFixed(2)}€</div>
 </div>
 `;
     containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -162,17 +175,23 @@ const displayMovements = (account: IAccount, sort = false) => {
 
 const calcSetBalance = (account: IAccount) => {
   account.balance = account.movements.reduce((acc, mov) => acc + mov);
-  labelBalance.textContent = account.balance + "€";
+  labelBalance.textContent = account.balance.toFixed(2) + "€";
 };
 
 const calcSetIncomes = (account: IAccount) => {
   labelSumIn.textContent =
-    account.movements.filter((m) => m > 0).reduce((acc, m) => m + acc) + "€";
+    account.movements
+      .filter((m) => m > 0)
+      .reduce((acc, m) => m + acc)
+      .toFixed(2) + "€";
 };
 
 const calcSetOuts = (account: IAccount) => {
   labelSumOut.textContent =
-    account.movements.filter((m) => m < 0).reduce((acc, m) => m + acc) + "€";
+    account.movements
+      .filter((m) => m < 0)
+      .reduce((acc, m) => m + acc)
+      .toFixed(2) + "€";
 };
 
 const calcSetInterest = (account: IAccount) => {
@@ -181,7 +200,8 @@ const calcSetInterest = (account: IAccount) => {
       .filter((dep) => dep > 0)
       .map((dep) => (dep * account.interestRate) / 100)
       .filter((interest) => interest > 1)
-      .reduce((acc, interest) => acc + interest) + "€";
+      .reduce((acc, interest) => acc + interest)
+      .toFixed(2) + "€";
 };
 
 const updateUI = (account: IAccount) => {
@@ -192,12 +212,17 @@ const updateUI = (account: IAccount) => {
   calcSetInterest(account);
 };
 
+// FAKE LOG IN
+currentAccount = account5;
+updateUI(currentAccount);
+containerApp.style.opacity = "1";
+
 btnLogin.addEventListener("click", (e) => {
   e.preventDefault();
   currentAccount = accounts.find(
     (acc) => acc.username === inputLoginUsername.value
   );
-  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+  if (currentAccount?.pin === +inputLoginPin.value) {
     labelWelcome.textContent = `Welcome back ${
       currentAccount.owner.split(" ")[0]
     }`;
@@ -211,7 +236,7 @@ btnLogin.addEventListener("click", (e) => {
 
 btnTransfer.addEventListener("click", (e) => {
   e.preventDefault();
-  const amount = Number(inputTransferAmount.value);
+  const amount = +inputTransferAmount.value;
   const receiverAcc = accounts.find(
     (acc) => acc.username === inputTransferTo.value
   );
@@ -221,8 +246,11 @@ btnTransfer.addEventListener("click", (e) => {
     amount <= currentAccount.balance &&
     receiverAcc.username !== currentAccount.username
   ) {
+    const transferDate = new Date().toISOString();
     currentAccount.movements.push(-amount);
+    currentAccount.movementsDates.push(transferDate);
     receiverAcc.movements.push(amount);
+    receiverAcc.movementsDates.push(transferDate);
     updateUI(currentAccount);
   } else {
     alert("Invalid transfer");
@@ -232,12 +260,13 @@ btnTransfer.addEventListener("click", (e) => {
 
 btnLoan.addEventListener("click", (e) => {
   e.preventDefault();
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(+inputLoanAmount.value);
   if (
     amount > 0 &&
     currentAccount.movements.some((dep) => dep >= amount * 0.1)
   ) {
     currentAccount.movements.push(amount);
+    currentAccount.movementsDates.push(new Date().toISOString());
     updateUI(currentAccount);
   } else {
     alert(`
@@ -252,7 +281,7 @@ btnClose.addEventListener("click", (e) => {
   e.preventDefault();
   if (
     inputCloseUsername.value === currentAccount.username &&
-    Number(inputClosePin.value) === currentAccount.pin
+    +inputClosePin.value === currentAccount.pin
   ) {
     const idx = accounts.findIndex(
       (acc) => acc.username === currentAccount.username
@@ -362,7 +391,7 @@ const z = Array.from({ length: 100 }, () => Math.trunc(Math.random() * 6 + 1));
 console.log(z);
 let movementsUI = Array.from(
   document.querySelectorAll(".movements__value"),
-  (el) => Number(el.textContent.replace("€", ""))
+  (el) => +(el.textContent.replace("€", ""))
 );
 console.log(movementsUI);
 */
@@ -509,3 +538,25 @@ console.log(
 console.log(Object.groupBy(dogs, (dog) => dog.owners.length));
 console.log(dogs.toSorted((a, b) => a.recFood - b.recFood));
 */
+
+// Learning Math and Number methods
+/*
+console.log(Number.isInteger("20.34px"));
+console.log(Math.PI * Number.parseFloat("10px") ** 2);
+
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+console.log(randomInt(2, 3));
+
+console.log(Math.floor(Math.random() * (0 - -5 + 1)) + -5);
+*/
+
+const now = new Date();
+labelDate.textContent = `${(now.getDate() + "").padStart(2, "0")}/${(
+  now.getMonth() +
+  1 +
+  ""
+).padStart(2, "0")}/${now.getFullYear()}, ${now.getHours()}:${(
+  now.getMinutes() + ""
+).padStart(2, "0")}`;
