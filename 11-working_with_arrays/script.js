@@ -1,28 +1,46 @@
 "use strict";
-const account1 = {
-    owner: "Jonas Schmedtmann",
-    movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
-    interestRate: 1.2,
-    pin: 1111,
+alert(`
+You can test this app using the following accounts:
+
+Account 1
+  User: jx  
+  PIN: 1111
+
+Account 2
+  User: jm  
+  PIN: 2222
+
+To transfer money to someone, make sure to use 'jm' or 'js' as the recipient username accordingly.
+`);
+/* // Old accounts
+const account1: IAccount = {
+  owner: "Jonas Schmedtmann",
+  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+  interestRate: 1.2,
+  pin: 1111,
 };
-const account2 = {
-    owner: "Jessica Davis",
-    movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
-    interestRate: 1.5,
-    pin: 2222,
+
+const account2: IAccount = {
+  owner: "Jessica Davis",
+  movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
+  interestRate: 1.5,
+  pin: 2222,
 };
-const account3 = {
-    owner: "Steven Thomas Williams",
-    movements: [200, -200, 340, -300, -20, 50, 400, -460],
-    interestRate: 0.7,
-    pin: 3333,
+
+const account3: IAccount = {
+  owner: "Steven Thomas Williams",
+  movements: [200, -200, 340, -300, -20, 50, 400, -460],
+  interestRate: 0.7,
+  pin: 3333,
 };
-const account4 = {
-    owner: "Sarah Smith",
-    movements: [430, 1000, 700, 50, 90],
-    interestRate: 1,
-    pin: 4444,
+
+const account4: IAccount = {
+  owner: "Sarah Smith",
+  movements: [430, 1000, 700, 50, 90],
+  interestRate: 1,
+  pin: 4444,
 };
+*/
 const account5 = {
     owner: "Jonas Xman",
     movements: [
@@ -63,7 +81,7 @@ const account6 = {
     currency: "USD",
     locale: "en-US",
 };
-const accounts = [account1, account2, account3, account4, account5, account6];
+const accounts = [account5, account6];
 let currentAccount, currentTimer;
 let sorted = false;
 // Elements
