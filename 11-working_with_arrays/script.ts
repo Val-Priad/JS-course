@@ -43,7 +43,9 @@ const account4: IAccount = {
 
 const account5: IAccount = {
   owner: "Jonas Xman",
-  movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
+  movements: [
+    200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300, 300, 3000,
+  ],
   interestRate: 1.2, // %
   pin: 1111,
 
@@ -56,6 +58,8 @@ const account5: IAccount = {
     "2020-05-27T17:01:17.194Z",
     "2020-07-11T23:36:17.929Z",
     "2020-07-12T10:51:36.790Z",
+    "2025-07-05T20:15:33.035Z",
+    "2025-07-07T20:15:33.035Z",
   ],
   currency: "EUR",
   locale: "pt-PT", // de-DE
@@ -82,7 +86,7 @@ const account6: IAccount = {
 };
 
 const accounts = [account1, account2, account3, account4, account5, account6];
-let currentAccount: IAccount;
+let currentAccount: IAccount, currentTimer;
 let sorted = false;
 
 // Elements
@@ -152,21 +156,67 @@ if (!accountsAreUnique(accounts)) {
   alert("You can't use the program, there is duplicate usernames in accounts");
 }
 
+const daysPassed = (date1, date2) =>
+  Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+
+/* // getFormattedDate fn
+const getFormattedDate = (date: Date) => {
+  return `${(date.getDate() + "").padStart(2, "0")}/${(
+    date.getMonth() +
+    1 +
+    ""
+  ).padStart(2, "0")}/${date.getFullYear()}, ${date.getHours()}:${(
+    date.getMinutes() + ""
+  ).padStart(2, "0")}`;
+};
+*/
+
+const updateTimeLogIn = (account) => {
+  labelDate.textContent = new Intl.DateTimeFormat(account.locale, {
+    hour: "numeric",
+    minute: "numeric",
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+    // weekday: "long",
+  }).format(new Date());
+};
+
+const getFormattedDateForMovements = (account, date: Date) => {
+  const timeDelta = daysPassed(new Date(), date);
+  if (timeDelta === 0) return `today`;
+  else if (timeDelta === 1) return `yesterday`;
+  else if (timeDelta < 4) return `${timeDelta} days ago`;
+  return new Intl.DateTimeFormat(account.locale).format(date);
+};
+
+const getFormattedCurrency = (account, value) =>
+  new Intl.NumberFormat(account.locale, {
+    style: "currency",
+    currency: account.currency,
+  }).format(value);
+
 const displayMovements = (account: IAccount, sort = false) => {
   containerMovements.innerHTML = "";
+  const combinedMovementsAndDates = account.movements.map((value, idx) => ({
+    value,
+    date: account.movementsDates.at(idx),
+  }));
 
   const movements = sort
-    ? account.movements.slice().sort((a, b) => a - b)
-    : account.movements;
+    ? combinedMovementsAndDates.slice().sort((a, b) => a.value - b.value)
+    : combinedMovementsAndDates;
+
   movements.forEach((mov, idx) => {
-    let movementDate: any = new Date(account.movementsDates[idx]);
-    movementDate = `${movementDate.getDate()}/${movementDate.getMonth()}/${movementDate.getFullYear()}`;
-    const typeOfMov = mov > 0 ? "deposit" : "withdrawal";
+    let movementDate: any = new Date(mov.date);
+    movementDate = getFormattedDateForMovements(account, new Date(mov.date));
+    const formattedCurrency = getFormattedCurrency(account, mov.value);
+    const typeOfMov = mov.value > 0 ? "deposit" : "withdrawal";
     const html = `
 <div class="movements__row">
   <div class="movements__type movements__type--${typeOfMov}">${idx} ${typeOfMov}</div>
   <div class="movements__date">${movementDate}</div> 
-  <div class="movements__value">${mov.toFixed(2)}€</div>
+  <div class="movements__value">${formattedCurrency}</div>
 </div>
 `;
     containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -175,36 +225,36 @@ const displayMovements = (account: IAccount, sort = false) => {
 
 const calcSetBalance = (account: IAccount) => {
   account.balance = account.movements.reduce((acc, mov) => acc + mov);
-  labelBalance.textContent = account.balance.toFixed(2) + "€";
+  labelBalance.textContent = getFormattedCurrency(account, account.balance);
 };
 
 const calcSetIncomes = (account: IAccount) => {
-  labelSumIn.textContent =
-    account.movements
-      .filter((m) => m > 0)
-      .reduce((acc, m) => m + acc)
-      .toFixed(2) + "€";
+  labelSumIn.textContent = getFormattedCurrency(
+    account,
+    account.movements.filter((m) => m > 0).reduce((acc, m) => m + acc)
+  );
 };
 
 const calcSetOuts = (account: IAccount) => {
-  labelSumOut.textContent =
-    account.movements
-      .filter((m) => m < 0)
-      .reduce((acc, m) => m + acc)
-      .toFixed(2) + "€";
+  labelSumOut.textContent = getFormattedCurrency(
+    account,
+    account.movements.filter((m) => m < 0).reduce((acc, m) => m + acc)
+  );
 };
 
 const calcSetInterest = (account: IAccount) => {
-  labelSumInterest.textContent =
+  labelSumInterest.textContent = getFormattedCurrency(
+    account,
     account.movements
       .filter((dep) => dep > 0)
       .map((dep) => (dep * account.interestRate) / 100)
       .filter((interest) => interest > 1)
       .reduce((acc, interest) => acc + interest)
-      .toFixed(2) + "€";
+  );
 };
 
 const updateUI = (account: IAccount) => {
+  updateTimeLogIn(account);
   displayMovements(account);
   calcSetBalance(account);
   calcSetIncomes(account);
@@ -212,10 +262,35 @@ const updateUI = (account: IAccount) => {
   calcSetInterest(account);
 };
 
-// FAKE LOG IN
-currentAccount = account5;
-updateUI(currentAccount);
-containerApp.style.opacity = "1";
+const startLogOutTimer = () => {
+  // Set time to 5 minutes
+  let timer = 600;
+  let minutes;
+  let seconds;
+  const tick = () => {
+    minutes = Math.floor(timer / 60) + "";
+    seconds = (timer % 60) + "";
+    labelTimer.textContent = `${minutes.padStart(2, "0")}:${seconds.padStart(
+      2,
+      "0"
+    )}`;
+    if (timer <= 0) {
+      clearInterval(interval);
+      currentAccount = undefined;
+      containerApp.style.opacity = "0";
+      labelWelcome.textContent = `Log in to get started`;
+    }
+    timer--;
+  };
+  tick();
+  const interval = setInterval(tick, 1000);
+  return interval;
+};
+
+const resetTimer = () => {
+  clearInterval(currentTimer);
+  currentTimer = startLogOutTimer();
+};
 
 btnLogin.addEventListener("click", (e) => {
   e.preventDefault();
@@ -223,6 +298,8 @@ btnLogin.addEventListener("click", (e) => {
     (acc) => acc.username === inputLoginUsername.value
   );
   if (currentAccount?.pin === +inputLoginPin.value) {
+    if (currentTimer) clearInterval(currentTimer);
+    currentTimer = startLogOutTimer();
     labelWelcome.textContent = `Welcome back ${
       currentAccount.owner.split(" ")[0]
     }`;
@@ -256,6 +333,7 @@ btnTransfer.addEventListener("click", (e) => {
     alert("Invalid transfer");
   }
   inputTransferAmount.value = inputTransferTo.value = "";
+  resetTimer();
 });
 
 btnLoan.addEventListener("click", (e) => {
@@ -272,9 +350,10 @@ btnLoan.addEventListener("click", (e) => {
     alert(`
 You can receive a loan only if you have a 
 deposit that is greater than 10% of a requested loan -
-you must have a deposit at least ${amount * 0.1} €
+you must have a deposit at least ${amount * 0.1} ${currentAccount.currency}
 `);
   }
+  resetTimer();
 });
 
 btnClose.addEventListener("click", (e) => {
@@ -298,7 +377,22 @@ btnSort.addEventListener("click", (e) => {
   e.preventDefault();
   sorted = !sorted;
   displayMovements(currentAccount, sorted);
+  resetTimer();
 });
+
+// labelDate.textContent = getFormattedDate(new Date());
+
+/* // LOCALE FROM BROWSER
+labelDate.textContent = new Intl.DateTimeFormat(navigator.language, {
+  hour: "numeric",
+  minute: "numeric",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  weekday: "long",
+}).format(new Date());
+*/
+
 // BANKIST APP END
 
 // Coding Challenge #4
@@ -551,12 +645,3 @@ console.log(randomInt(2, 3));
 
 console.log(Math.floor(Math.random() * (0 - -5 + 1)) + -5);
 */
-
-const now = new Date();
-labelDate.textContent = `${(now.getDate() + "").padStart(2, "0")}/${(
-  now.getMonth() +
-  1 +
-  ""
-).padStart(2, "0")}/${now.getFullYear()}, ${now.getHours()}:${(
-  now.getMinutes() + ""
-).padStart(2, "0")}`;
