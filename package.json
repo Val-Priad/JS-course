@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "sweetalert2": "^11.22.2"
+    "@types/leaflet": "^1.9.20",
+    "sweetalert2": "^11.6.13"
   }
 }
