@@ -1,6 +1,18 @@
 {
   "dependencies": {
+    "core-js": "^3.44.0",
+    "lodash-es": "^4.17.21",
+    "regenerator-runtime": "^0.14.1",
+    "sweetalert2": "^11.22.2"
+  },
+  "devDependencies": {
     "@types/leaflet": "^1.9.20",
-    "sweetalert2": "^11.6.13"
+    "@types/lodash-es": "^4.17.12",
+    "parcel": "^2.15.4",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "start": "parcel ",
+    "build": "parcel build"
   }
 }
