@@ -27,7 +27,7 @@ export default class View {
             // IT'S BAD PERFORMANT
             // Updates changed Text
             if (!newEl.isEqualNode(curEl) &&
-                newEl.firstChild.nodeValue?.trim() !== "") {
+                newEl.firstChild?.nodeValue?.trim() !== "") {
                 curEl.textContent = newEl.textContent;
             }
             if (!newEl.isEqualNode(curEl)) {

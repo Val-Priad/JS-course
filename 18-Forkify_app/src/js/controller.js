@@ -4,10 +4,10 @@ import * as model from "./model.js";
 import recipeView from "./views/recipeView.js";
 import searchView from "./views/searchView.js";
 import resultsView from "./views/resultsView.js";
+import bookmarksView from "./views/bookmarksView.js";
 import paginationView from "./views/paginationView.js";
 import "regenerator-runtime/runtime";
 import "core-js/stable";
-const recipeContainer = document.querySelector(".recipe");
 // NEW API URL (instead of the one shown in the video)
 // https://forkify-api.jonas.io
 //
@@ -18,11 +18,12 @@ const controllerRecipes = async () => {
             return;
         recipeView.renderSpinner();
         resultsView.update(model.getSearchResultsPage());
+        bookmarksView.update(model.state.bookmarks);
         await model.loadRecipe(id);
         recipeView.render(model.state.recipe);
     }
     catch (error) {
-        recipeView.renderError();
+        recipeView.renderError(error);
     }
 };
 const controllerSearchResults = async () => {
@@ -45,12 +46,24 @@ const controllerPagination = (page) => {
 };
 const controllerServings = (newServings) => {
     model.updateServings(newServings);
-    // recipeView.render(model.state.recipe);
     recipeView.update(model.state.recipe);
 };
+const controllerToggleBookmark = () => {
+    if (!model.state.recipe.bookmarked)
+        model.addBookmark(model.state.recipe);
+    else
+        model.deleteBookmark(model.state.recipe.id);
+    recipeView.update(model.state.recipe);
+    bookmarksView.render(model.state.bookmarks);
+};
+const controllerBookmarks = () => {
+    bookmarksView.render(model.state.bookmarks);
+};
 const init = function () {
+    bookmarksView.addHandlerRender(controllerBookmarks);
     recipeView.addHandlerRender(controllerRecipes);
     recipeView.addHandlerUpdateServings(controllerServings);
+    recipeView.addHandlerAddBookmark(controllerToggleBookmark);
     searchView.addHandlerSearch(controllerSearchResults);
     paginationView.addHandlerClick(controllerPagination);
 };

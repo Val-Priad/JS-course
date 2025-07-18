@@ -22,6 +22,9 @@ export const loadRecipe = async function (id) {
             cookingTime: recipe.cooking_time,
             ingredients: recipe.ingredients,
         };
+        if (state?.bookmarks?.some((recipe) => recipe.id === state.recipe.id)) {
+            state.recipe.bookmarked = true;
+        }
     }
     catch (err) {
         throw err;
@@ -36,6 +39,7 @@ export const loadSearchResults = async (query) => {
             publisher: recipe.publisher,
             image: recipe.image_url,
         }));
+        state.search.currentPage = 1;
     }
     catch (err) {
         throw err;
@@ -57,3 +61,28 @@ export const updateServings = (servings) => {
     });
     state.recipe.servings = servings;
 };
+export const addBookmark = function (recipe) {
+    if (!state.bookmarks)
+        state.bookmarks = [];
+    state.bookmarks.push(recipe);
+    state.recipe.bookmarked = true;
+    persistBookmarks();
+};
+export const deleteBookmark = function (id) {
+    state.recipe.bookmarked = false;
+    state.bookmarks.splice(state.bookmarks.findIndex((recipe) => recipe.id === id), 1);
+    persistBookmarks();
+};
+const persistBookmarks = function () {
+    localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
+};
+const clearBookmarks = function () {
+    localStorage.removeItem("bookmarks");
+};
+const init = function () {
+    const storage = localStorage.getItem("bookmarks");
+    if (storage)
+        state.bookmarks = JSON.parse(storage);
+};
+init();
+console.log(state.bookmarks);
