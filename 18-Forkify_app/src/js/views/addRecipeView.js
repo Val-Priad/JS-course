@@ -1,3 +1,4 @@
+// @ts-ignore
 import View from "./view.js";
 class AddRecipeView extends View {
     _parentElement = document.querySelector(".upload");

@@ -1,4 +1,3 @@
-import { reduce, result, toUpper } from "lodash-es";
 import * as configuration from "./config.js";
 import { AJAX } from "./helpers.js";
 

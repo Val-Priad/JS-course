@@ -1,6 +1,3 @@
-// @ts-ignore
-import icons from "url:../../img/icons.svg";
-import View from "./view";
 import PreviewView from "./previewView";
 class ResultsView extends PreviewView {
   _parentElement = document.querySelector(".results");

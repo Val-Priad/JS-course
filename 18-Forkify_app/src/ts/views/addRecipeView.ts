@@ -1,5 +1,4 @@
 // @ts-ignore
-import icons from "url:../../img/icons.svg";
 import View from "./view.js";
 
 class AddRecipeView extends View {
