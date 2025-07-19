@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "src/ts",
     "outDir": "src/js",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["DOM", "ESNext", "DOM.Iterable", "ESNext.Object"],
     "target": "esnext"
   }
 }

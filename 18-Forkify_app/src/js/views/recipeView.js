@@ -13,9 +13,7 @@ class RecipeView extends View {
               <svg class="recipe__icon">
                 <use href="${icons}#icon-check"></use>
               </svg>
-              <div class="recipe__quantity">${Number.isFinite(ingredient.quantity)
-            ? fracty(ingredient.quantity)
-            : ""}</div>
+              <div class="recipe__quantity">${ingredient.quantity ? fracty(ingredient.quantity) : ""}</div>
               <div class="recipe__description">
                 <span class="recipe__unit">${ingredient.unit}</span>
                 ${ingredient.description}
@@ -61,7 +59,7 @@ class RecipeView extends View {
             </div>
           </div>
 
-          <div class="recipe__user-generated">
+          <div class="recipe__user-generated ${this._data.key ? "" : "hidden"}">
             <svg>
               <use href="${icons}#icon-user"></use>
             </svg>

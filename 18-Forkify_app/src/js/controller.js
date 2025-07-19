@@ -6,6 +6,8 @@ import searchView from "./views/searchView.js";
 import resultsView from "./views/resultsView.js";
 import bookmarksView from "./views/bookmarksView.js";
 import paginationView from "./views/paginationView.js";
+import addRecipeView from "./views/addRecipeView.js";
+import * as config from "./config.js";
 import "regenerator-runtime/runtime";
 import "core-js/stable";
 // NEW API URL (instead of the one shown in the video)
@@ -59,6 +61,22 @@ const controllerToggleBookmark = () => {
 const controllerBookmarks = () => {
     bookmarksView.render(model.state.bookmarks);
 };
+const controllerAddRecipe = async function (newRecipe) {
+    try {
+        addRecipeView.renderSpinner();
+        await model.uploadRecipe(newRecipe);
+        window.location.hash = "#" + model.state.recipe.id;
+        bookmarksView.render(model.state.bookmarks);
+        recipeView.render(model.state.recipe);
+        addRecipeView.renderMessage();
+        setTimeout(() => {
+            addRecipeView.toggleWindow();
+        }, config.WAIT_AFTER_RECIPE_UPLOAD);
+    }
+    catch (error) {
+        addRecipeView.renderError(`${error.message}`);
+    }
+};
 const init = function () {
     bookmarksView.addHandlerRender(controllerBookmarks);
     recipeView.addHandlerRender(controllerRecipes);
@@ -66,5 +84,6 @@ const init = function () {
     recipeView.addHandlerAddBookmark(controllerToggleBookmark);
     searchView.addHandlerSearch(controllerSearchResults);
     paginationView.addHandlerClick(controllerPagination);
+    addRecipeView.addHandlerUpload(controllerAddRecipe);
 };
 init();
