@@ -6,7 +6,7 @@
 
 ## ⚙️ Technologies
 
-[![Technologies](https://skillicons.dev/icons?i=html,css,sass,js,ts&perline=4)](https://skillicons.dev)
+[![Technologies](https://skillicons.dev/icons?i=html,css,sass,js,ts&perline=5)](https://skillicons.dev)
 
 - **HTML**
 - **CSS**
