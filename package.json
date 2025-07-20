@@ -9,6 +9,7 @@
     "@types/leaflet": "^1.9.20",
     "@types/lodash-es": "^4.17.12",
     "parcel": "^2.15.4",
+    "sass": "^1.89.2",
     "typescript": "^5.8.3"
   },
   "scripts": {

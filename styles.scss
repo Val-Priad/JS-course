@@ -1,0 +1,70 @@
+@function rem($px) {
+  @return #{$px/16}rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.container {
+  height: 100vh;
+  background-color: hsl(0, 0%, 5%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section {
+  max-width: rem(752);
+  padding: rem(30) rem(60);
+  background-color: hsl(0, 0%, 10%);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  display: block;
+  margin-bottom: rem(40);
+  max-width: rem(616);
+  color: hsl(0, 0%, 90%);
+  font-size: rem(20);
+  line-height: rem(25);
+  font-weight: 200;
+  text-align: center;
+}
+
+.courses-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: rem(40);
+  row-gap: rem(30);
+}
+
+.btn {
+  padding: rem(15) rem(25);
+  display: inline-block;
+  max-width: rem(201);
+  background-color: hsl(0, 0%, 15%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:link,
+  &:visited {
+    text-decoration: none;
+    color: hsl(0, 0%, 90%);
+    text-align: center;
+    font-weight: 300;
+    font-size: rem(16);
+  }
+
+  &:hover,
+  &:active {
+    transform: scale(1.05);
+    background-color: hsl(0, 0%, 20%);
+  }
+}

@@ -1,0 +1,65 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.container {
+  height: 100vh;
+  background-color: hsl(0, 0%, 5%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section {
+  max-width: 47rem;
+  padding: 1.875rem 3.75rem;
+  background-color: hsl(0, 0%, 10%);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  display: block;
+  margin-bottom: 2.5rem;
+  max-width: 38.5rem;
+  color: hsl(0, 0%, 90%);
+  font-size: 1.25rem;
+  line-height: 1.5625rem;
+  font-weight: 200;
+  text-align: center;
+}
+
+.courses-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2.5rem;
+  row-gap: 1.875rem;
+}
+
+.btn {
+  padding: 0.9375rem 1.5625rem;
+  display: inline-block;
+  max-width: 12.5625rem;
+  background-color: hsl(0, 0%, 15%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn:link, .btn:visited {
+  text-decoration: none;
+  color: hsl(0, 0%, 90%);
+  text-align: center;
+  font-weight: 300;
+  font-size: 1rem;
+}
+.btn:hover, .btn:active {
+  transform: scale(1.05);
+  background-color: hsl(0, 0%, 20%);
+}
+
+/*# sourceMappingURL=styles.css.map */
